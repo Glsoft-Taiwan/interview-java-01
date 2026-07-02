@@ -1,8 +1,8 @@
 # Java Backend Coding Challenge: Product Filter, Aggregator & Logger API
 
-Welcome to the live coding interview! This repository is a pre-configured Spring Boot starter project designed to help you complete the challenge within 20-30 minutes without wasting time on boilerplate setup.
+Welcome to the live coding interview. This repository is intended to reduce setup time, so the challenge can focus on implementation rather than local environment troubleshooting.
 
-歡迎來到上機實作面試！本專案是一個預先配置好的 Spring Boot 骨架，旨在幫助您在 20-30 分鐘內完成測驗，無需將時間花費在繁瑣的基礎環境設定上。
+歡迎來到上機實作面試。本專案的目標是降低環境設定成本，讓測驗重點放在實作，而不是本機環境排錯。
 
 ---
 
@@ -14,12 +14,31 @@ The detailed specification, expected JSON response formats, and evaluation crite
 
 ---
 
+## ✅ Environment Options / 執行環境選項
+Choose one of the following:
+
+請從以下兩種方式擇一執行：
+
+- **Option A: Local JDK 17 / 本機執行**
+  - Requires **Java 17**.
+  - Uses the included Maven Wrapper (`./mvnw`), so a separate Maven installation is **not required**.
+
+- **Option B: Docker / 容器執行**
+  - Only requires Docker.
+  - No local Java or Maven setup is needed.
+
+> Note: This project is configured and tested against **Java 17**.  
+> 注意：本專案以 **Java 17** 為基準，請不要假設較新的 JDK 版本一定相容。
+
+---
+
 ## 📁 Repository Overview / 專案結構概覽
-The boilerplate setup has been completed for you:  
+The starter project already includes:
+
 以下基礎設置已為您準備妥當：
 
-- **Environment**: Spring Boot 3.3.x with Java 17+ and in-memory H2 Database configuration.  
-  **環境配置**：Spring Boot 3.3.x、Java 17+ 以及 H2 記憶體資料庫配置。
+- **Environment**: Spring Boot 3.3.x with Java 17 and in-memory H2 Database configuration.  
+  **環境配置**：Spring Boot 3.3.x、Java 17 與 H2 記憶體資料庫配置。
 - **HTTP Client**: `DummyJsonProductClient` is fully implemented and fetches products from the external DummyJSON API.  
   **HTTP 客戶端**：`DummyJsonProductClient` 已完整實作，可直接獲取外部 DummyJSON API 的商品資料。
 - **DAO & DB Log**: `SearchQueryLog` JPA Entity and `SearchQueryLogRepository` (DAO) are already implemented.  
@@ -55,20 +74,42 @@ Please implement the missing logic marked with `TODO` in the following files:
 
 ## 🚀 How to Run & Verify / 如何啟動與驗證
 
-1.  **Start the Application / 啟動系統**:
-    *   Run the main method in `com.example.interview.InterviewApplication` using your IDE (IntelliJ IDEA / Eclipse) or run `mvn spring-boot:run` in terminal.  
-        使用 IDE 執行 `InterviewApplication` 的 `main` 方法，或在終端機執行 `mvn spring-boot:run`。
-2.  **Test the Endpoint / 測試 API**:
-    *   Send a request via curl or your browser:  
-        透過 curl 或瀏覽器發送測試請求：
-        ```bash
-        curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
-        ```
-3.  **Inspect Database Logs (Optional) / 檢查資料庫紀錄（選填）**:
-    *   Access the H2 Web Console at `http://localhost:8080/h2-console`.  
-        存取 H2 控制台：`http://localhost:8080/h2-console`
-    *   JDBC URL: `jdbc:h2:mem:interviewdb`
-    *   Username: `sa`
-    *   Password: *Leave blank / 留空*
-    *   Run `SELECT * FROM SEARCH_QUERY_LOG` to check if query logs are saved correctly.  
-        執行 SQL `SELECT * FROM SEARCH_QUERY_LOG` 確認搜尋紀錄是否正確寫入。
+### Option A: Run Locally with Java 17 / 使用 Java 17 本機執行
+
+1. Confirm `java -version` shows **Java 17**.  
+   請先確認 `java -version` 顯示的是 **Java 17**。
+2. Start the app:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+   The first run may download Maven automatically.
+   第一次執行時可能會自動下載 Maven。
+3. Test the endpoint:
+   ```bash
+   curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+   ```
+
+### Option B: Run with Docker / 使用 Docker 執行
+
+1. Build the image:
+   ```bash
+   docker build -t interview-java-challenge .
+   ```
+2. Start the container:
+   ```bash
+   docker run --rm -p 8080:8080 interview-java-challenge
+   ```
+3. Test the endpoint:
+   ```bash
+   curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+   ```
+
+### Optional: Inspect Database Logs / 選擇性檢查資料庫紀錄
+
+- Access the H2 Web Console at `http://localhost:8080/h2-console`.  
+  存取 H2 控制台：`http://localhost:8080/h2-console`
+- JDBC URL: `jdbc:h2:mem:interviewdb`
+- Username: `sa`
+- Password: *Leave blank / 留空*
+- Run `SELECT * FROM SEARCH_QUERY_LOG` to verify logs were saved correctly.  
+  執行 SQL `SELECT * FROM SEARCH_QUERY_LOG` 確認搜尋紀錄是否正確寫入。
