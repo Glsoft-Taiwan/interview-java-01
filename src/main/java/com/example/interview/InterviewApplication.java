@@ -6,6 +6,7 @@ import com.example.interview.dto.ProductResponseDto;
 import com.example.interview.dto.SearchAndLogResponse;
 import com.example.interview.repository.SearchQueryLogRepository;
 import com.example.interview.service.ProductService;
+import com.example.interview.exception.NoProductsFoundException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -51,8 +52,10 @@ public class InterviewApplication {
             writeResponse(exchange, 200, toJson(response));
         } catch (IllegalArgumentException ex) {
             writeResponse(exchange, 400, "{\"error\":\"" + escapeJson(ex.getMessage()) + "\"}");
-        } catch (RuntimeException ex) {
+        } catch (NoProductsFoundException ex) {
             writeResponse(exchange, 404, "{\"error\":\"" + escapeJson(ex.getMessage()) + "\"}");
+        } catch (Exception ex) {
+            writeResponse(exchange, 500, "{\"error\":\"Internal Server Error: " + escapeJson(ex.getMessage()) + "\"}");
         }
     }
 
