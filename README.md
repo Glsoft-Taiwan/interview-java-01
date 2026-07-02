@@ -1,115 +1,175 @@
 # Java Backend Coding Challenge: Product Filter, Aggregator & Logger API
 
-Welcome to the live coding interview. This repository is intended to reduce setup time, so the challenge can focus on implementation rather than local environment troubleshooting.
+This is a lightweight Java backend coding challenge for a 20-minute interview.
 
-歡迎來到上機實作面試。本專案的目標是降低環境設定成本，讓測驗重點放在實作，而不是本機環境排錯。
+The goal is to evaluate basic backend structure and implementation skills:
 
----
+- Controller: receive and validate request parameters.
+- Service: implement business logic.
+- DTO: shape input/output data.
+- DAO/Repository: save search metadata.
+- Client: fetch product data from an already provided source.
 
-## 🔗 Challenge Specification / 測驗詳細規格
-The detailed specification, expected JSON response formats, and evaluation criteria are available on the wiki page:  
-詳細的 API 規格、預期 JSON 響應格式及評分標準請參閱 Wiki 頁面：
+This project intentionally does not use Spring Boot, JPA, H2, Lombok, or external HTTP clients. The challenge should test Java/backend fundamentals, not framework setup.
 
-👉 **[Java Backend Coding Challenge Specification (Wiki Link)](https://wiki.david888.com/share/7d186b781ebbfc22ff79614ea049ab66)**
+## Challenge Specification
 
----
+Detailed API behavior, response format, and evaluation criteria are available here:
 
-## ✅ Environment Options / 執行環境選項
-Choose one of the following:
+[Java Backend Coding Challenge Specification](https://wiki.david888.com/share/7d186b781ebbfc22ff79614ea049ab66)
 
-請從以下兩種方式擇一執行：
+## Environment
 
-- **Option A: Local JDK 17 / 本機執行**
-  - Requires **Java 17**.
-  - Uses the included Maven Wrapper (`./mvnw`), so a separate Maven installation is **not required**.
+Choose one option:
 
-- **Option B: Docker / 容器執行**
-  - Only requires Docker.
-  - No local Java or Maven setup is needed.
+- Local: Java 17 or newer.
+- Docker: Docker only. Use this path when the local Java setup is unavailable or uncertain.
 
-> Note: This project is configured and tested against **Java 17**.  
-> 注意：本專案以 **Java 17** 為基準，請不要假設較新的 JDK 版本一定相容。
+The included Maven Wrapper (`./mvnw`) downloads Maven automatically when needed. The project compiles to Java 17 bytecode for portability.
 
----
+## Project Structure
 
-## 📁 Repository Overview / 專案結構概覽
 The starter project already includes:
 
-以下基礎設置已為您準備妥當：
+- `ProductController`: request parameter validation and service delegation.
+- `ProductService`: product filtering, sorting, aggregation, and logging logic.
+- `SearchAndLogResponse`, `ProductResponseDto`, `StatsDto`: response DTOs.
+- `SearchQueryLogRepository`: in-memory DAO for saved search logs.
+- `DummyJsonProductClient`: provided in-memory product source.
+- `InterviewApplication`: small JDK HTTP server for manual endpoint testing.
 
-- **Environment**: Spring Boot 3.3.x with Java 17 and in-memory H2 Database configuration.  
-  **環境配置**：Spring Boot 3.3.x、Java 17 與 H2 記憶體資料庫配置。
-- **HTTP Client**: `DummyJsonProductClient` is fully implemented and fetches products from the external DummyJSON API.  
-  **HTTP 客戶端**：`DummyJsonProductClient` 已完整實作，可直接獲取外部 DummyJSON API 的商品資料。
-- **DAO & DB Log**: `SearchQueryLog` JPA Entity and `SearchQueryLogRepository` (DAO) are already implemented.  
-  **資料庫日誌層**：`SearchQueryLog` JPA 實體與 `SearchQueryLogRepository` (DAO) 已寫好。
-- **Global Error Handling**: `GlobalExceptionHandler` and `NoProductsFoundException` are pre-wired.  
-  **全域異常處理**：`GlobalExceptionHandler` 與 `NoProductsFoundException` 已配置完成。
+## Your Tasks
+
+Implement the missing logic marked with `TODO`.
+
+In `com.example.interview.controller.ProductController`:
+
+- Require `q`.
+- Reject blank `q`.
+- Default `sortBy` to `"price"` when omitted.
+- Delegate to `ProductService`.
+
+In `com.example.interview.service.ProductService`:
+
+- Fetch product data from `DummyJsonProductClient`.
+- Filter out products where `price < minPrice` when `minPrice` is provided.
+- Throw `NoProductsFoundException` when no products match.
+- Compute `averagePrice` and `maxDiscount`.
+- Sort products descending by `price`, `rating`, or `discount`.
+- Save search metadata through `SearchQueryLogRepository`.
+- Return `SearchAndLogResponse`.
+
+## Run Locally
+
+```bash
+./mvnw package
+java -jar target/interview-java-challenge-0.0.1-SNAPSHOT.jar
+```
+
+After completing the TODOs, test the endpoint:
+
+```bash
+curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+```
+
+## Run with Docker
+
+```bash
+docker build -t interview-java-challenge .
+docker run --rm -p 8080:8080 interview-java-challenge
+```
+
+After completing the TODOs, test the endpoint:
+
+```bash
+curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+```
 
 ---
 
-## 🛠️ Your Tasks / 您的實作任務
-Please implement the missing logic marked with `TODO` in the following files:  
-請在以下檔案中尋找 `TODO` 標記並完成未實作的邏輯：
+# Java Backend 上機實作題：Product Filter, Aggregator & Logger API
 
-1.  **Service Layer**: `com.example.interview.service.ProductService`
-    *   Filter products (exclude products where `price < minPrice`).  
-        **過濾商品**：排除價格小於 `minPrice` 的商品。
-    *   Aggregate statistics (calculate `averagePrice` and `maxDiscount` of the filtered products).  
-        **聚合統計**：計算過濾後商品的平均價格 (`averagePrice`) 與最大折扣 (`maxDiscount`)。
-    *   Sort the filtered products in descending order based on `sortBy` (`price`, `rating`, or `discount`).  
-        **商品排序**：依據 `sortBy` 參數，對商品清單進行**降序 (descending)** 排序。
-    *   Save search query metadata to the local H2 database using the repository and retrieve the generated log ID.  
-        **寫入日誌**：使用 Repository 將搜尋的關鍵字、過濾條件與匹配數量存入本機 H2 資料庫，並獲取生成的主鍵 ID。
+這是一份輕量級 Java backend 上機實作題，設計目標是 20 分鐘內完成。
 
-2.  **Controller Layer**: `com.example.interview.controller.ProductController`
-    *   Expose the GET endpoint `/api/products/search-and-log`.  
-        **宣告端點**：暴露 GET `/api/products/search-and-log` 接口。
-    *   Bind incoming query parameters (`q` - required, `minPrice` - optional, `sortBy` - optional with default value `"price"`).  
-        **綁定參數**：映射 Query Parameters（`q` 為必填，`minPrice` 與 `sortBy` 為選填）。
-    *   Delegate execution to the service.  
-        **委派呼叫**：呼叫 Service 層處理業務邏輯並返回結果。
+本題要評估的是候選人的基礎 backend 分層與實作能力：
 
----
+- Controller：接收並驗證 request 參數。
+- Service：實作商業邏輯。
+- DTO：定義輸入與輸出資料格式。
+- DAO/Repository：儲存搜尋紀錄。
+- Client：從已提供的資料來源取得產品資料。
 
-## 🚀 How to Run & Verify / 如何啟動與驗證
+本專案刻意不使用 Spring Boot、JPA、H2、Lombok 或外部 HTTP client。這題應該測 Java/backend 基礎，不應該測框架與環境設定。
 
-### Option A: Run Locally with Java 17 / 使用 Java 17 本機執行
+## 題目規格
 
-1. Confirm `java -version` shows **Java 17**.  
-   請先確認 `java -version` 顯示的是 **Java 17**。
-2. Start the app:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-   The first run may download Maven automatically.
-   第一次執行時可能會自動下載 Maven。
-3. Test the endpoint:
-   ```bash
-   curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
-   ```
+詳細 API 行為、回傳格式與評分標準請參考：
 
-### Option B: Run with Docker / 使用 Docker 執行
+[Java Backend Coding Challenge Specification](https://wiki.david888.com/share/7d186b781ebbfc22ff79614ea049ab66)
 
-1. Build the image:
-   ```bash
-   docker build -t interview-java-challenge .
-   ```
-2. Start the container:
-   ```bash
-   docker run --rm -p 8080:8080 interview-java-challenge
-   ```
-3. Test the endpoint:
-   ```bash
-   curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
-   ```
+## 執行環境
 
-### Optional: Inspect Database Logs / 選擇性檢查資料庫紀錄
+請擇一使用：
 
-- Access the H2 Web Console at `http://localhost:8080/h2-console`.  
-  存取 H2 控制台：`http://localhost:8080/h2-console`
-- JDBC URL: `jdbc:h2:mem:interviewdb`
-- Username: `sa`
-- Password: *Leave blank / 留空*
-- Run `SELECT * FROM SEARCH_QUERY_LOG` to verify logs were saved correctly.  
-  執行 SQL `SELECT * FROM SEARCH_QUERY_LOG` 確認搜尋紀錄是否正確寫入。
+- 本機執行：Java 17 或更新版本。
+- Docker 執行：只需要 Docker。若本機 Java 環境不確定，請直接使用此方式。
+
+專案已包含 Maven Wrapper (`./mvnw`)，需要時會自動下載 Maven。本專案會編譯成 Java 17 bytecode，以提高可攜性。
+
+## 專案結構
+
+本專案已提供：
+
+- `ProductController`：request 參數驗證與 service 委派。
+- `ProductService`：產品過濾、排序、統計與寫入紀錄。
+- `SearchAndLogResponse`、`ProductResponseDto`、`StatsDto`：回傳 DTO。
+- `SearchQueryLogRepository`：in-memory DAO，用來保存搜尋紀錄。
+- `DummyJsonProductClient`：已提供的 in-memory 產品資料來源。
+- `InterviewApplication`：使用 JDK 內建 HTTP server，方便手動測試 endpoint。
+
+## 實作任務
+
+請完成程式中標記 `TODO` 的邏輯。
+
+在 `com.example.interview.controller.ProductController`：
+
+- `q` 為必填。
+- 拒絕空白的 `q`。
+- `sortBy` 未提供時預設為 `"price"`。
+- 委派給 `ProductService`。
+
+在 `com.example.interview.service.ProductService`：
+
+- 從 `DummyJsonProductClient` 取得產品資料。
+- 當有提供 `minPrice` 時，排除 `price < minPrice` 的產品。
+- 沒有任何符合產品時，拋出 `NoProductsFoundException`。
+- 計算 `averagePrice` 與 `maxDiscount`。
+- 依照 `price`、`rating` 或 `discount` 做降序排序。
+- 透過 `SearchQueryLogRepository` 儲存搜尋紀錄。
+- 回傳 `SearchAndLogResponse`。
+
+## 本機執行
+
+```bash
+./mvnw package
+java -jar target/interview-java-challenge-0.0.1-SNAPSHOT.jar
+```
+
+完成 TODO 後，測試 endpoint：
+
+```bash
+curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+```
+
+## Docker 執行
+
+```bash
+docker build -t interview-java-challenge .
+docker run --rm -p 8080:8080 interview-java-challenge
+```
+
+完成 TODO 後，測試 endpoint：
+
+```bash
+curl -i "http://localhost:8080/api/products/search-and-log?q=apple&minPrice=100&sortBy=price"
+```

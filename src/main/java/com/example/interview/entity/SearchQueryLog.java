@@ -1,29 +1,14 @@
 package com.example.interview.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "search_query_log")
 public class SearchQueryLog {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "query_text", nullable = false)
     private String queryText;
-
-    @Column(name = "min_price_filter")
     private Double minPriceFilter;
-
-    @Column(name = "matched_count", nullable = false)
     private Integer matchedCount;
-
-    @Column(name = "searched_at", nullable = false)
     private LocalDateTime searchedAt;
-
-    public SearchQueryLog() {}
 
     public SearchQueryLog(String queryText, Double minPriceFilter, Integer matchedCount, LocalDateTime searchedAt) {
         this.queryText = queryText;

@@ -1,9 +1,23 @@
 package com.example.interview.repository;
 
 import com.example.interview.entity.SearchQueryLog;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SearchQueryLogRepository extends JpaRepository<SearchQueryLog, Long> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class SearchQueryLogRepository {
+
+    private final AtomicLong sequence = new AtomicLong(1);
+    private final List<SearchQueryLog> logs = new ArrayList<>();
+
+    public SearchQueryLog save(SearchQueryLog log) {
+        log.setId(sequence.getAndIncrement());
+        logs.add(log);
+        return log;
+    }
+
+    public List<SearchQueryLog> findAll() {
+        return List.copyOf(logs);
+    }
 }

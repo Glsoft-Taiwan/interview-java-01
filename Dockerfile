@@ -5,13 +5,13 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-RUN mvn -q -DskipTests package
+RUN mvn -q package
 
 FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar /app/app.jar
+COPY --from=build /app/target/interview-java-challenge-0.0.1-SNAPSHOT.jar /app/app.jar
 
 EXPOSE 8080
 

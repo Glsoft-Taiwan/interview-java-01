@@ -2,11 +2,7 @@ package com.example.interview.controller;
 
 import com.example.interview.dto.SearchAndLogResponse;
 import com.example.interview.service.ProductService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -15,13 +11,12 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // TODO: Expose GET HTTP endpoint "/search-and-log"
-    // Parameters:
-    // - "q" (String, required)
-    // - "minPrice" (Double, optional)
-    // - "sortBy" (String, optional, default: "price")
-    // Should call productService.searchFilterAndLog(...) and return ResponseEntity.ok(...)
-    public ResponseEntity<SearchAndLogResponse> searchAndLog() {
+    // TODO: Validate the incoming parameters and delegate to the service.
+    // Rules:
+    // - q is required and cannot be blank.
+    // - minPrice is optional.
+    // - sortBy is optional and defaults to "price".
+    public SearchAndLogResponse searchAndLog(String q, Double minPrice, String sortBy) {
         return null; // Replace with your implementation
     }
 }
